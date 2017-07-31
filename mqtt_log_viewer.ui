@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='utf-8'?>
+<interface>
+  <object class="tk.Toplevel" id="Toplevel_1">
+    <property name="height">200</property>
+    <property name="width">200</property>
+    <child>
+      <object class="ttk.Frame" id="mainWindow">
+        <property name="height">200</property>
+        <property name="width">200</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">True</property>
+          <property name="row">0</property>
+        </layout>
+        <child>
+          <object class="ttk.Labelframe" id="LabelMQTTLog">
+            <property name="height">200</property>
+            <property name="text" translatable="yes">MQTT  Log</property>
+            <property name="width">600</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+            </layout>
+            <child>
+              <object class="tk.Text" id="logBox">
+                <property name="font">{Times New Roman} 6 {}</property>
+                <property name="height">50</property>
+                <property name="text" translatable="yes">Logs:</property>
+                <property name="width">150</property>
+                <property name="yscrollcommand">yscrollbar.set</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="columnspan">3</property>
+                  <property name="padx">5</property>
+                  <property name="pady">5</property>
+                  <property name="propagate">True</property>
+                  <property name="row">1</property>
+                  <property name="rowspan">1</property>
+                  <property name="sticky">ew</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="ttk.Scrollbar" id="yscrollbar">
+                <property name="command">logBox.yview</property>
+                <property name="orient">vertical</property>
+                <layout>
+                  <property name="column">2</property>
+                  <property name="padx">5</property>
+                  <property name="pady">5</property>
+                  <property name="propagate">True</property>
+                  <property name="row">1</property>
+                  <property name="sticky">nse</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

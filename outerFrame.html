@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript">
+var i = 0;
+setInterval(function(){
+	document.getElementById('frame').src="line_example_newer.html";
+	document.getElementById('s').innerHTML = ++i;
+}, 5000);
+</script>
+</head>
+<body>
+	out <span id="s">0</span>
+	
+	<iframe id="frame" src="line_example_newer.html" width="100%" height='900px'/>
+	
+</body>
+</html>

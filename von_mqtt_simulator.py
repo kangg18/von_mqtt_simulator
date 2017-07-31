@@ -19,43 +19,72 @@ from shutil import copyfile
 import struct
 import requests
 import urllib2
+import hashlib
+
 from datetime import datetime
 try:
     import tkinter as tk  # for python 3
 except:
     import Tkinter as tk  # for python 2
 import pygubu
-import hashlib
+
 from pygubu.builder import ttkstdwidgets
+
 import csv
 import paho.mqtt.client as mqtt
+import webbrowser
+import threading
+
 import jsonpickle
 import folium
-import webbrowser
-
-import matplotlib
-matplotlib.use('TkAgg')
 
 from numpy import arange, sin, pi
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
-# implement the default mpl key bindings
-from matplotlib.backend_bases import key_press_handler
-
-
-from matplotlib.figure import Figure
-
-import matplotlib.pyplot as plt
+import numpy as np
 from numpy.random import randn
-from matplotlib.mlab import normpdf
 import numpy
 
+# implement the default mpl key bindings
+from matplotlib.backend_bases import key_press_handler
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+import matplotlib
+from matplotlib.mlab import normpdf
+matplotlib.use('TkAgg')
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 import matplotlib.patches as patches
 import matplotlib.path as path
 import matplotlib.animation as animation
-import numpy as np
-import threading
 
-MQTT_TYPE_JSON_TDR =1 
+
+class VONMqttProtocol:
+	pass
+
+VONMqttProtocol
+
+VONMqttProtocol.MQTT_PUB_TYPE_JSON_TDR =1 
+VONMqttProtocol.MQTT_PUB_TYPE_JSON_TRIP =2
+VONMqttProtocol.MQTT_PUB_TYPE_JSON_GPS_HELLO =4  
+VONMqttProtocol.MQTT_PUB_TYPE_JSON_NETWORK_HELLO =5
+
+VONMqttProtocol.MQTT_PUB_TYPE_JSON_FW_REQUEST=6 
+VONMqttProtocol.MQTT_PUB_TYPE_JSON_CARDB_REQUEST=7
+
+
+VONMqttProtocol.MQTT_RPC_CMD_JSON_RESET ="reset"
+VONMqttProtocol.MQTT_RPC_CMD_JSON_BEEP = "beep" 
+VONMqttProtocol.MQTT_RPC_CMD_JSON_SERIAL = "serial" 
+VONMqttProtocol.MQTT_RPC_CMD_JSON_TDR ="gettdr" 
+VONMqttProtocol.MQTT_RPC_CMD_JSON_TRIP ="gettrip" 
+VONMqttProtocol.MQTT_RPC_CMD_JSON_RUSAGE ="getrusage" 
+VONMqttProtocol.MQTT_RPC_CMD_JSON_STOPPUSH ="stoppush" 
+VONMqttProtocol.MQTT_RPC_CMD_JSON_VINFO ="getVinfo" 
+VONMqttProtocol.MQTT_RPC_CMD_FW_CHUNK ="sendfwchunk"
+VONMqttProtocol.MQTT_RPC_CMD_CARDB_CHUNK ="sendcardbchunk"
+VONMqttProtocol.MQTT_RPC_CMD_GET_SECURITY_LEVEL ="getSecuritylevel" 
+VONMqttProtocol.MQTT_RPC_CMD_SET_SECURITY_LEVEL ="setSecuritylevel" 	
+VONMqttProtocol.MQTT_RPC_CMD_CLEAR_ALL_DATA ="clearAllData" 	
+VONMqttProtocol.MQTT_RPC_CMD_GET_GPS_KEY ="getGPSKey" 
+VONMqttProtocol.MQTT_RPC_CMD_SEND_UPDATE_INFO ="sendUpdateInfo" 
 
 class MQTTLogViewr:
 	def __init__(self, master):
@@ -110,7 +139,8 @@ class MeanInterPolator:
 
 class VehicleSimulator:
 
-	def __init__(self,upperapp,driveSecList, periodic,fastfw_factor):
+	def __init__(self,upperapp,tripinfo,driveSecList, periodic,fastfw_factor):
+		self.tripInfo = tripinfo
 	 	self.driveSecList = driveSecList
 	 	self.driveSecIndex = 0
 	 	self.sleepTime = periodic 
@@ -119,7 +149,7 @@ class VehicleSimulator:
 		self.upperapp  = upperapp
 		self.fastfw_factor = fastfw_factor
 	def goNextSlice(self):
-		if (len(self.driveSecList)-self.driveSecIndex) <= 1 :
+		if (len(self.driveSecList)-self.driveSecIndex) <= 2 :
 				return None 
 		else:
 			self.driveSecIndex = self.driveSecIndex +1
@@ -153,6 +183,8 @@ class VehicleSimulator:
 			rpmArray  = MeanInterPolator(self.ahead.rpm,self.next.rpm,self.iteratorNum)
 			
 			speedArray = MeanInterPolator(self.ahead.speed, self.next.speed,self.iteratorNum)
+			latArray  =MeanInterPolator(self.ahead.lat, self.next.lat,self.iteratorNum)
+			lonArray  =MeanInterPolator(self.ahead.lon, self.next.lon,self.iteratorNum)
 			'''
 			distancerray  =MeanInterPolator(self.ahead.distance, self.next.distance,self.iteratorNum)
 			fcArray  =MeanInterPolator(self.ahead.fc, self.next.fc,self.iteratorNum)
@@ -161,8 +193,7 @@ class VehicleSimulator:
 			engTempArray  =MeanInterPolator(self.ahead.engTemp, self.next.engTemp,self.iteratorNum)
 			fuelSrray  =MeanInterPolator(self.ahead.fuelS, self.next.fuelS,self.iteratorNum)
 			bVoltArray  =MeanInterPolator(self.ahead.bVolt, self.next.bVolt,self.iteratorNum)
-			latArray  =MeanInterPolator(self.ahead.lat, self.next.lat,self.iteratorNum)
-			lonArray  =MeanInterPolator(self.ahead.lon, self.next.lon,self.iteratorNum)
+
 			courseArray  =MeanInterPolator(self.ahead.course, self.next.course,self.iteratorNum)
 			axArray  =MeanInterPolator(self.ahead.acc_xy, self.next.acc_xy,self.iteratorNum)
 			asArray  =MeanInterPolator(self.ahead.yaw_rot, self.next.yaw_rot,self.iteratorNum)
@@ -177,6 +208,8 @@ class VehicleSimulator:
 				aDrvisec.rpm= int(rpmArray.getValue())
 				
 				aDrvisec.speed=int(speedArray.getValue())
+				aDrvisec.lat=int(latArray.getValue())
+				aDrvisec.lon=int(lonArray.getValue())
 				'''
 				aDrvisec.distance=int(distancerray.getValue())
 				aDrvisec.fc=int(fcArray.getValue())
@@ -185,8 +218,7 @@ class VehicleSimulator:
 				aDrvisec.engTemp=int(engTempArray.getValue())
 				aDrvisec.fuelS=int(fuelSrray.getValue())
 				aDrvisec.bVolt=int(bVoltArray.getValue())
-				aDrvisec.lat=int(latArray.getValue())
-				aDrvisec.lon=int(lonArray.getValue())
+		
 				aDrvisec.course=int(courseArray.getValue())
 				aDrvisec.gVal=normDriveSec.gVal
 				aDrvisec.acc_xy=int(axArray.getValue())
@@ -202,6 +234,8 @@ class VehicleSimulator:
 				 	print "self.progressTime ",self.progressTime, "aDrvisec.speed " , aDrvisec.speed
 					self.upperapp.drawDynamics.push_speed_point(self.progressTime,aDrvisec.speed)
 				
+
+				self.upperapp.save_gps_line_and_marker_html((aDrvisec.lat/100000.0,aDrvisec.lon/100000.0))
 		
 
 
@@ -218,22 +252,84 @@ class VehicleSimulator:
 
 				aDriveSecJosn = JsonMQTTMarshall()
 				aDriveSecJosn.ts = aDrvisec.ts 
-				aDriveSecJosn.type =MQTT_TYPE_JSON_TDR 
+				aDriveSecJosn.type =VONMqttProtocol.MQTT_PUB_TYPE_JSON_TDR 
 				aDriveSecJosn.payload = aDrvisec
 
 				frozen = jsonpickle.encode(aDriveSecJosn,unpicklable=False)
 				print  "frozen " , frozen
 
 				if hasattr(self.upperapp,'theMQTT'):
-					self.upperapp.theMQTT.publish(frozen)
-
+					if self.upperapp.isSendable_TDR():
+						self.upperapp.theMQTT.publish(frozen)
+					else:
+						print "No isSendable_TDR Cleint"
+				else:
+					print "No Mqtt Cleint"
 			
-				if self.stop == True:
+				 
+			print 	"self.driveSecIndex" , self.driveSecIndex ,"len(self.driveSecList) ",len(self.driveSecList)
+			if  self.driveSecIndex+2 == (len(self.driveSecList)):
+					aTrip = TripMarshall()
+					
+					
+					aTrip.tid =self.tripInfo.tid 
+					aTrip.stime =self.tripInfo.stime 
+					aTrip.etime=self.tripInfo.etime 
+					aTrip.iTime=self.tripInfo.iTime 
+					aTrip.rTime=self.tripInfo.rTime 
+					aTrip.fCutTime=self.tripInfo.fCutTime 
+					aTrip.ecoTime=self.tripInfo.ecoTime 
+					aTrip.accelTime=self.tripInfo.accelTime 
+					aTrip.oSpeedTime=self.tripInfo.oSpeedTime 
+					aTrip.warmTime=self.tripInfo.warmTime 
+
+					#sudden mark 
+					aTrip.sudden_mark_accel=self.tripInfo.sudden_mark_accel 
+					aTrip.sudden_mark_decel=self.tripInfo.sudden_mark_decel 
+					
+					#fc
+					aTrip.fcMass=self.tripInfo.fcMass 
+					aTrip.fcEffi=self.tripInfo.fcEffi 
+
+					#speed 
+					aTrip.avgSpeed=self.tripInfo.avgSpeed 
+					aTrip.maxSpeed=self.tripInfo.maxSpeed 
+
+					#co2
+					aTrip.co2PerKm=self.tripInfo.co2PerKm 
+					aTrip.co2Mass=self.tripInfo.co2Mass 
+
+					aTrip.dtcType =self.tripInfo.dtcType 
+					aTrip.dtcCode =self.tripInfo.dtcCode 
+					
+					#vehicle 
+					aTrip.engTempMax=self.tripInfo.engTempMax
+
+					#gps 
+					aTrip.h_lat=self.tripInfo.h_lat 
+					aTrip.h_lon=self.tripInfo.h_lon 
+					aTrip.t_lat=self.tripInfo.t_lat 
+					aTrip.t_lon=self.tripInfo.t_lon
+
+					aTripJson = JsonMQTTMarshall()
+					aTripJson.ts = aDrvisec.ts 
+					aTripJson.type =VONMqttProtocol.MQTT_PUB_TYPE_JSON_TRIP 
+					aTripJson.payload = aTrip
+					frozen = jsonpickle.encode(aTripJson,unpicklable=False)
+					print  "frozen " , frozen
+					if hasattr(self.upperapp,'theMQTT'):
+						if self.upperapp.isSendable_Trip():
+							self.upperapp.theMQTT.publish(frozen)
+						else:
+							print "No isSendable_Trip Cleint"
+					else:
+						print "No Mqtt Cleint"
+			
+
+
+			if self.stop == True:
 					print "Scn Stop "
-					return  
-				
-			if  self.driveSecIndex == (len(self.driveSecList)-1):
-					  print  "trip sent "
+					return 
 
 
 
@@ -368,13 +464,16 @@ class MQTTClient:
 		if self.isConneced == True:
 			self.mqttc.publish(self.sendingTopic,payload)
 			if hasattr(self.uppaerapp, 'mqttLogViwer'):
-					self.uppaerapp.mqttLogViwer.pushlog("pub "  , self.sendingTopic + payload +"\r\n" )
+					self.uppaerapp.mqttLogViwer.pushlog("pub "  , self.sendingTopic + "   payload : " +  payload +"\r\n" )
 
 	def on_connect(self,mqttc, obj, flags, rc):
 		print("on_connect rc: " + str(rc))
 		self.isConneced = True
 	def on_message(self,mqttc, obj, msg):
 		print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+		if hasattr(self.uppaerapp, 'mqttLogViwer'):
+					self.uppaerapp.mqttLogViwer.pushlog("sub "  , self.rpcReqTopic +  "   payload : " + payload +"\r\n" )
+
 	def on_publish(self,mqttc, obj, mid):
 		print("mid: " + str(mid))
 	def on_subscribe(self,mqttc, obj, mid, granted_qos):
@@ -384,11 +483,45 @@ class MQTTClient:
 	def __del__(self):	
 		self.mqttc.disconnect()
 
+class NetworkHelloMarshall(object): 
+	def __init__(self):
+		self.network_id=0
+		self.fw_version=0
+		self.complied_version=0
+		self.cardb_name=0
+		self.obd2_supported_result=0
+
+
+
 class JsonMQTTMarshall(object):
 	def __init__(self):
 		self.ts  =0 
 		self.type  =0 
 		self.payload =None
+
+class GPSHelloMarshall(object): 
+	def __init__(self):
+		self.lat=0
+		self.lon=0
+		self.time_zone_shift=0
+
+	
+class FWRequestMarshall(object): 
+	def __init__(self):
+		self.network_id=0
+		self.device_id=0
+		self.fw_version=0
+		self.complied_version=0
+		self.cardb_name=0
+		self.obd2_supported_result=0
+
+class CarDBRequest(object): 
+	def __init__(self):
+		self.network_id=0
+		self.device_id=0
+		self.cardb_name=0
+		self.obd2_supported_result=0
+
 
 class DriveSecMarshall(object): 
 	def __init__(self):
@@ -445,11 +578,12 @@ class TripMarshall(object):
 		self.accelTime=0
 		self.oSpeedTime=0
 		self.warmTime=0
+		self.distance=0
 
 		#sudden mark 
 		self.sudden_mark_accel=0
 		self.sudden_mark_decel=0
-		
+		self.sudden_mark_rot=0
 		#fc
 		self.fcMass=0
 		self.fcEffi=0
@@ -515,13 +649,15 @@ class DriveSecManager:
 
 
 
-class TripInfo:
+class TripInfo(TripMarshall):
 	id =0
 	start_time =0
 	end_time =0
 	duration = 0
 	distance=0
 	fuel_consumption=0
+
+
 	sudden_mark_point = [] 
 	gps_shadow_zone_point = []
 	geo_location_list=[]
@@ -530,7 +666,10 @@ class TripInfo:
 	speedArray=[]
 	accelArray=[]
 	asArray=[]
-	
+	def __init__(self):
+		TripMarshall.__init__(self)
+		pass
+
 	def __str__(self):
 		s =  'start_time  %d, end_time %d , distance %d \r\n ' % (self.start_time, self.end_time, self.distance)
 		s =  s +  "sudden_mark_point:" + str(self.sudden_mark_point) + "\r\n"
@@ -558,6 +697,10 @@ class Scenario:
 		tripInfo = TripInfo()
 		tripInfo.drvSecList.append(startDriveSec)	
 		
+
+
+		speedMax = 0
+
 		for driveSec in drvSecList:
 			#print driveSec	
 			index=index+1		
@@ -569,7 +712,7 @@ class Scenario:
 				break 		
 			
 			tripInfo.distance = tripInfo.distance+ driveSec.distance
-			tripInfo.fuel_consumption = tripInfo.fuel_consumption+ driveSec.fc
+			tripInfo.fcMass= tripInfo.fcMass+ driveSec.fc
 			
 			
 			tripInfo.id = driveSec.tid
@@ -591,7 +734,14 @@ class Scenario:
 			tripInfo.accelArray.append(driveSec.acc_xy)		
 			tripInfo.asArray.append(driveSec.yaw_rot)		
 			tripInfo.end_time = driveSec.ts 
-			
+			speedMax = (speedMax,driveSec.speed)
+
+			if tripInfo.sudden_mark_point ==1 :
+				tripInfo.sudden_mark_accel = tripInfo.sudden_mark_accel+1
+			if tripInfo.sudden_mark_point ==2 :
+				tripInfo.sudden_mark_decel = tripInfo.sudden_mark_decel+1
+			if tripInfo.sudden_mark_point ==3 :
+				tripInfo.sudden_mark_rot = tripInfo.sudden_mark_rot+1
 
 		for aa in range(0, index):
 			drvSecList.pop()
@@ -601,7 +751,55 @@ class Scenario:
 		
 		tripInfo.start_time = startDriveSec.ts
 	
-		tripInfo.duration = tripInfo.end_time - tripInfo.start_time 
+		
+
+
+
+
+		tripInfo.tid =strt_id
+		tripInfo.stime =startDriveSec.ts
+		tripInfo.etime=driveSec.ts
+		tripInfo.duration = tripInfo.etime - tripInfo.stime 
+
+		tripInfo.iTime=0    # implmented in Real Device 
+		tripInfo.rTime=0    # implmented in Real Device 
+		tripInfo.fCutTime=0 # implmented in Real Device 
+		tripInfo.ecoTime=0  # implmented in Real Device 
+		tripInfo.accelTime=0 # implmented in Real Device 
+		tripInfo.oSpeedTime=0 # implmented in Real Device 
+		tripInfo.warmTime=0 # implmented in Real Device 
+
+		#sudden mark 
+		
+		#fc
+
+		tripInfo.fcMass=tripInfo.fcMass
+		tripInfo.fcMass=tripInfo.fcMass/(tripInfo.duration*1.0)
+
+		#speed 
+		tripInfo.distance = driveSec.distance
+		tripInfo.avgSpeed=driveSec.distance/tripInfo.duration*1.0
+		tripInfo.maxSpeed=speedMax
+
+		#co2
+		tripInfo.co2PerKm=0 # implmented in Real Device 
+		tripInfo.co2Mass=0  # implmented in Real Device 
+
+		tripInfo.dtcType ='e' # implmented in Real Device 
+		tripInfo.dtcCode = 'P0101'  # implmented in Real Device 
+		
+		#vehicle 
+		tripInfo.engTempMax=0
+
+		#gps 
+		aStartPos = tripInfo.geo_location_list[0]
+		aEndPos= tripInfo.geo_location_list[-1]
+	
+		tripInfo.h_lat=aStartPos[1]
+		tripInfo.h_lon=aStartPos[2]
+		tripInfo.t_lat=aEndPos[1]
+		tripInfo.t_lon=aEndPos[2]
+
 		
 		print "drvSecList len", len(drvSecList)
 		print  "tripInfo", tripInfo
@@ -643,7 +841,42 @@ class Application:
 
 		builder.connect_callbacks(self)
 		
+		self.ChkTDR = builder.get_object('ChkTDR', self.mainwindow)
+		self.ChkTrip = builder.get_object('ChkTrip', self.mainwindow)
+		self.ChkTDR.select()
+		self.ChkTrip.select()
+
+		self.comboProtocol = builder.get_object('comboProtocol', self.mainwindow)
+		self.comboProtocol['values'] =["skt_v1"]
+		self.comboProtocol.current(0)
+		
+		self.comboAuthMethod = builder.get_object('comboAuthMethod', self.mainwindow)
+		self.comboAuthMethod['values'] =["skt_without_password"]
+		self.comboAuthMethod.current(0)
+
+		
+		#aa = "{\"method\":\"reset\",\"params\":{\"Immediate\":\"true\"}}"
+		#print aa
+		#thawed = jsonpickle.decode(aa)
+		#print (thawed['params'])['Immediate']
+
+	def isSendable_TDR(self): 
+		builder = self.builder
+		#print "builder.get_variable()" , builder.get_variable('varTDR').get()
+		if int(builder.get_variable('varTDR').get())==1:
+			return True 
+		else:
+			return False
+		 
+
+	def isSendable_Trip(self): 
+		builder = self.builder
+		if builder.get_variable('varTrip').get()=='1':
+			return True 
+		return False
+
 	
+
 
 	def on_connect_mqtt_clicked(self):
 		#frozen = jsonpickle.encode(DriveSecMarshall(),unpicklable=False)
@@ -790,7 +1023,7 @@ class Application:
 		self.txtFFTimes = builder.get_object('txtFFTimes', self.mainwindow).get()
 		flInterval = float(self.txtSendingInterval )
 		ffw = int(self.txtFFTimes )
-		self.vs =  VehicleSimulator(self,ATrip.drvSecList,flInterval,ffw)
+		self.vs =  VehicleSimulator(self,ATrip,ATrip.drvSecList,flInterval,ffw)
 		self.vs.stop = False
 		t = threading.Thread(target=self.vs.doLoop)
 		t.start()
@@ -825,8 +1058,7 @@ class Application:
 		pass
 
 
-	def on_view_gps_track_clicked(self):
-
+	def save_gps_line_and_marker_html(self, geolocaltion):
 		id =  self.comboTripList.get()
 		
 		ATrip = 0 
@@ -836,18 +1068,39 @@ class Application:
 				break 
 
 		coordinates=[]
+		
 		for geoLoc in ATrip.geo_location_list:
 			lat = geoLoc[1]/100000.0
 			lon = geoLoc[2]/100000.0
 			coordinates.append([lat,lon])
 
-		print coordinates
+		#print coordinates
+
+		#print "save_gps_line_and_marker_html geolocations", geolocaltion
+		if geolocaltion==None:
+			geolocaltion=(0,0)
+			geoLoc = ATrip.geo_location_list[0]
+			lat = geoLoc[1]/100000.0
+			lon = geoLoc[2]/100000.0
+			geolocaltion= (lat,lon)
+
+
 		# Create the map and add the line
-		m = folium.Map(location=[lat, lon], zoom_start=12)
+		m = folium.Map(location=[geolocaltion[0], geolocaltion[1]], zoom_start=14)
 		my_PolyLine=folium.PolyLine(locations=coordinates,weight=5)
+		
+		folium.CircleMarker(location=[geolocaltion[0], geolocaltion[1]], radius=20,
+                    popup='Laurelhurst Park', color='#3186cc',
+                    fill_color='#3186cc').add_to(m)
 		m.add_child(my_PolyLine)
 		m.save('line_example_newer.html')
- 		webbrowser.open('line_example_newer.html')
+
+		pass
+
+	def on_view_gps_track_clicked(self):
+
+		self.save_gps_line_and_marker_html(None)
+ 		webbrowser.open('outerFrame.html')
 		pass
 		
 	def on_scn_select_button_clicked(self):
@@ -873,6 +1126,300 @@ class Application:
 
 		pass
 
+	def on_send_gps_hello_button_clicked(self):
+		jSon = JsonMQTTMarshall()
+		gpsHello = GPSHelloMarshall() 
+
+		jSon.ts = int(time.time()) 
+
+		gpsHello.lat=3754839
+		gpsHello.lon=12710136
+		gpsHello.time_zone_shift=9*60
+
+		jSon.type =VONMqttProtocol.MQTT_PUB_TYPE_JSON_GPS_HELLO
+		jSon.payload = gpsHello
+
+
+		frozen = jsonpickle.encode(jSon,unpicklable=False)
+		print  "frozen " , frozen
+
+		if hasattr(self,'theMQTT'):
+			self.theMQTT.publish(frozen)
+		pass
+
+
+	def on_send_network_hello_button_clicked(self):
+		jSon = JsonMQTTMarshall()
+		Hello = GPSHelloMarshall() 
+
+		jSon.ts = int(time.time()) 
+
+		Hello.network_id="A000001"
+		Hello.fw_version="vonsimul-01.01"
+		Hello.complied_version="2017/01/06"
+		Hello.cardb_name="CombinedFileEncrypt 10001 PERMANENT DTC"
+		Hello.obd2_supported_result="FF01FF01"
+
+		jSon.type =VONMqttProtocol.MQTT_PUB_TYPE_JSON_NETWORK_HELLO
+		jSon.payload = Hello
+		frozen = jsonpickle.encode(jSon,unpicklable=False)
+		print  "frozen " , frozen
+
+		if hasattr(self,'theMQTT'):
+			self.theMQTT.publish(frozen)
+		pass
+
+		
+
+	def on_send_fw_request_button_clicked(self):
+		jSon = JsonMQTTMarshall()
+		req = GPSHelloMarshall() 
+
+
+		req.network_id="A000001"
+		req.device_id="A000001"
+		req.fw_version="vonsimul-01.01"
+		req.complied_version="2017/01/06"
+		req.cardb_name="CombinedFileEncrypt 10001 PERMANENT DTC"
+		req.obd2_supported_result="FF01FF01"
+
+		jSon.ts = int(time.time()) 
+
+		
+
+		jSon.type =VONMqttProtocol.MQTT_PUB_TYPE_JSON_FW_REQUEST
+		jSon.payload = req
+		frozen = jsonpickle.encode(jSon,unpicklable=False)
+		print  "frozen " , frozen
+
+		if hasattr(self,'theMQTT'):
+			self.theMQTT.publish(frozen)
+		pass
+
+		pass
+
+	def on_send_cardb_request_button_clicked(self):
+		jSon = JsonMQTTMarshall()
+		req = CarDBRequest() 
+
+
+		req.network_id="A000001"
+		req.device_id="A000001"
+		req.cardb_name="CombinedFileEncrypt 10001 PERMANENT DTC"
+		req.obd2_supported_result="FF01FF01"
+
+		jSon.ts = int(time.time()) 
+
+		jSon.type =VONMqttProtocol.MQTT_PUB_TYPE_JSON_FW_REQUEST
+		jSon.payload = req
+		frozen = jsonpickle.encode(jSon,unpicklable=False)
+		print  "frozen " , frozen
+
+		if hasattr(self,'theMQTT'):
+			self.theMQTT.publish(frozen)
+		pass
+
+		
+	def on_from_server_serial_button_clicked(self):
+
+		aa = "{\"method\":\"serail\",\"params\":{\"Immediate\":\"true\"}}"
+		print aa
+		thawed = jsonpickle.decode(aa)
+	
+		if thawed['method'] == VONMqttProtocol.VONMqttProtocol.MQTT_RPC_CMD_JSON_SERIAL:
+			print thawed['params']
+
+
+
+		pass
+
+	def on_from_server_beep_button_clicked(self):
+
+		aa = "{\"method\":\"beep\"}"
+		print aa
+		thawed = jsonpickle.decode(aa)
+	
+		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_BEEP_LEVEL:
+			print thawed['params']
+
+
+
+		passs
+
+	def on_from_server_reset_button_clicked(self):
+
+		aa = "{\"method\":\"reset\",\"params\":{\"Immediate\":\"true\"}}"
+		print aa
+		thawed = jsonpickle.decode(aa)
+	
+		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_JSON_RESET:
+			print thawed['params']
+
+
+
+		pass
+
+	def on_from_server_gettdr_button_clicked(self):
+
+		aa = "{\"method\":\"gettdr\",\"params\":{\"lastoffset\":\"-1\"}}"
+		print aa
+		thawed = jsonpickle.decode(aa)
+	
+		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_JSON_TDR:
+			print thawed['params']
+
+
+
+		pass
+
+	def on_from_server_gettrip_button_clicked(self):
+
+		aa = "{\"method\":\"gettrip\",\"params\":{\"lastoffset\":\"-1\"}}"
+		print aa
+		thawed = jsonpickle.decode(aa)
+	
+		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_JSON_TRIP:
+			print thawed['params']
+
+
+
+		pass
+
+
+
+	def on_from_server_getrusage_button_clicked(self):
+
+		aa = "{\"method\":\"getrusage\",\"params\":{\"from\":\"2016-07-31\",\"to\":\"2017-07-31\"}}"
+		print aa
+		thawed = jsonpickle.decode(aa)
+	
+		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_JSON_RUSAGE:
+			print thawed['params']
+
+
+
+		pass
+
+
+
+	def on_from_server_stoppush_button_clicked(self):
+
+		aa = "{\"method\":\"stoppush\"}"
+		print aa
+		thawed = jsonpickle.decode(aa)
+	
+		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_JSON_STOPPUSH:
+			print thawed['params']
+
+
+
+		pass
+	def on_from_server_getVinfo_button_clicked(self):
+
+		aa = "{\"method\":\"getVinfo\"}"
+		print aa
+		thawed = jsonpickle.decode(aa)
+	
+		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_JSON_VINFO:
+			print thawed['params']
+
+
+
+		pass
+
+	def on_from_server_sendfwchunk_button_clicked(self):
+
+		aa = "{\"method\":\"sendfwchunk\",\"params\":{\"total_size\":\"512348\",\"chunk_size\":\"128\",,\"chunk_index\":\"1\",\"payload\":\"MFIXX23\"}}"
+		print aa
+		thawed = jsonpickle.decode(aa)
+	
+		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_FW_CHUNK:
+			print thawed['params']
+
+
+
+		pass
+	def on_from_server_sendcardbchunk_button_clicked(self):
+
+		aa = "{\"method\":\"sendcardbchunk\",\"params\":{\"total_size\":\"512348\",\"chunk_size\":\"128\",,\"chunk_index\":\"1\",\"payload\":\"MFIXX23\"}}"
+	
+		print aa
+		thawed = jsonpickle.decode(aa)
+	
+		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_CARDB_CHUNK:
+			print thawed['params']
+
+
+
+		pass
+
+
+	def on_from_server_getSecuritylevel_button_clicked(self):
+
+		aa = "{\"method\":\"getSecuritylevel\"}"
+		print aa
+		thawed = jsonpickle.decode(aa)
+	
+		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_GET_SECURITY_LEVEL:
+			print thawed['params']
+
+
+
+		pass
+
+
+	def on_from_server_setSecuritylevel_button_clicked(self):
+
+		aa = "{\"method\":\"setSecuritylevel\",\"params\":{\"level\":\"1\"}}"
+		print aa
+		thawed = jsonpickle.decode(aa)
+	
+		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_SET_SECURITY_LEVEL:
+			print thawed['params']
+
+
+
+		pass
+
+
+	def on_from_server_clearAllData_button_clicked(self):
+
+		aa = "{\"method\":\"clearAllData\"}"
+		print aa
+		thawed = jsonpickle.decode(aa)
+	
+		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_CLEAR_ALL_DATA:
+			print thawed['params']
+
+
+
+		pass
+
+	def on_from_server_getGPSKey_button_clicked(self):
+
+		aa = "{\"method\":\"getGPSKey\"}"
+		print aa
+		thawed = jsonpickle.decode(aa)
+	
+		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_GET_GPS_KEY:
+			print thawed['params']
+
+
+
+		pass
+
+	def on_from_server_sendUpdateInfo_button_clicked(self):
+
+		aa = "{\"method\":\"sendUpdateInfo\",\"params\":{\"type\":\"fw\"}}"
+		print aa
+		thawed = jsonpickle.decode(aa)
+	
+		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_SEND_UPDATE_INFO:
+			print thawed['params']
+
+
+
+		pass
 
 if __name__ == '__main__':
 	ROOT_PATH = os.path.dirname(os.path.abspath(__file__))   

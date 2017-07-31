@@ -1098,7 +1098,7 @@
                 </layout>
                 <child>
                   <object class="ttk.Labelframe" id="lblPushProtocols">
-                    <property name="height">50</property>
+                    <property name="height">80</property>
                     <property name="text" translatable="yes">From Device to Server</property>
                     <property name="width">1024</property>
                     <layout>
@@ -1137,7 +1137,10 @@
                     </layout>
                     <child>
                       <object class="tk.Checkbutton" id="ChkTDR">
+                        <property name="offvalue">0</property>
+                        <property name="onvalue">1</property>
                         <property name="text" translatable="yes">Tracked Driving Record</property>
+                        <property name="variable">string:varTDR</property>
                         <layout>
                           <property name="column">0</property>
                           <property name="propagate">True</property>
@@ -1147,7 +1150,10 @@
                     </child>
                     <child>
                       <object class="tk.Checkbutton" id="ChkTrip">
+                        <property name="offvalue">0</property>
+                        <property name="onvalue">1</property>
                         <property name="text" translatable="yes">Trip</property>
+                        <property name="variable">int:varTrip</property>
                         <layout>
                           <property name="column">1</property>
                           <property name="propagate">True</property>
@@ -1156,22 +1162,50 @@
                       </object>
                     </child>
                     <child>
-                      <object class="tk.Checkbutton" id="ChkGPSHello">
-                        <property name="text" translatable="yes">GPS Hello</property>
+                      <object class="ttk.Button" id="btnSendGPSHello">
+                        <property name="command">on_send_gps_hello_button_clicked</property>
+                        <property name="default">normal</property>
+                        <property name="text" translatable="yes">Send GPS Hello.</property>
                         <layout>
-                          <property name="column">2</property>
+                          <property name="column">0</property>
                           <property name="propagate">True</property>
-                          <property name="row">0</property>
+                          <property name="row">1</property>
                         </layout>
                       </object>
                     </child>
                     <child>
-                      <object class="tk.Checkbutton" id="ChkNetworkHello">
-                        <property name="text" translatable="yes">Network Hello</property>
+                      <object class="ttk.Button" id="btnSendNetworkHello">
+                        <property name="command">on_send_network_hello_button_clicked</property>
+                        <property name="default">normal</property>
+                        <property name="text" translatable="yes">Send Network Hello.</property>
+                        <layout>
+                          <property name="column">1</property>
+                          <property name="propagate">True</property>
+                          <property name="row">1</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Button" id="btnSendFWRequest">
+                        <property name="command">on_send_fw_request_button_clicked</property>
+                        <property name="default">normal</property>
+                        <property name="text" translatable="yes">Send FW Request</property>
+                        <layout>
+                          <property name="column">2</property>
+                          <property name="propagate">True</property>
+                          <property name="row">1</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Button" id="btnSendCarDBRequest">
+                        <property name="command">on_send_cardb_request_button_clicked</property>
+                        <property name="default">normal</property>
+                        <property name="text" translatable="yes">Send Car DB Request</property>
                         <layout>
                           <property name="column">3</property>
                           <property name="propagate">True</property>
-                          <property name="row">0</property>
+                          <property name="row">1</property>
                         </layout>
                       </object>
                     </child>
@@ -1218,7 +1252,7 @@
                     </layout>
                     <child>
                       <object class="ttk.Button" id="btnSerialID">
-                        <property name="command">on_get_gps_token_button_clicked</property>
+                        <property name="command">on_from_server_serial_button_clicked</property>
                         <property name="default">normal</property>
                         <property name="text" translatable="yes">Device Serial</property>
                         <layout>
@@ -1230,7 +1264,7 @@
                     </child>
                     <child>
                       <object class="ttk.Button" id="btnReset">
-                        <property name="command">on_get_gps_token_button_clicked</property>
+                        <property name="command">on_from_server_reset_button_clicked</property>
                         <property name="default">normal</property>
                         <property name="text" translatable="yes">Reset</property>
                         <layout>
@@ -1253,48 +1287,12 @@
                       </object>
                     </child>
                     <child>
-                      <object class="ttk.Button" id="btnConfimedTrip">
-                        <property name="command">on_get_gps_token_button_clicked</property>
-                        <property name="default">normal</property>
-                        <property name="text" translatable="yes">Confiremd Trip</property>
-                        <layout>
-                          <property name="column">4</property>
-                          <property name="propagate">True</property>
-                          <property name="row">0</property>
-                        </layout>
-                      </object>
-                    </child>
-                    <child>
                       <object class="ttk.Button" id="btnCurrentTDR">
                         <property name="command">on_get_gps_token_button_clicked</property>
                         <property name="default">normal</property>
                         <property name="text" translatable="yes">Get TDR</property>
                         <layout>
                           <property name="column">5</property>
-                          <property name="propagate">True</property>
-                          <property name="row">0</property>
-                        </layout>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="ttk.Button" id="btnGetTime">
-                        <property name="command">on_get_gps_token_button_clicked</property>
-                        <property name="default">normal</property>
-                        <property name="text" translatable="yes">Get Time</property>
-                        <layout>
-                          <property name="column">6</property>
-                          <property name="propagate">True</property>
-                          <property name="row">0</property>
-                        </layout>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="ttk.Button" id="btnNetworkID">
-                        <property name="command">on_get_gps_token_button_clicked</property>
-                        <property name="default">normal</property>
-                        <property name="text" translatable="yes">Radio ID</property>
-                        <layout>
-                          <property name="column">6</property>
                           <property name="propagate">True</property>
                           <property name="row">0</property>
                         </layout>
@@ -1319,18 +1317,6 @@
                         <property name="text" translatable="yes">StopPush</property>
                         <layout>
                           <property name="column">7</property>
-                          <property name="propagate">True</property>
-                          <property name="row">0</property>
-                        </layout>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="ttk.Button" id="btnGPSHelloResponse">
-                        <property name="command">on_get_gps_token_button_clicked</property>
-                        <property name="default">normal</property>
-                        <property name="text" translatable="yes">GPSHelloResponse</property>
-                        <layout>
-                          <property name="column">8</property>
                           <property name="propagate">True</property>
                           <property name="row">0</property>
                         </layout>
