@@ -1,0 +1,1348 @@
+<?xml version='1.0' encoding='utf-8'?>
+<interface>
+  <object class="ttk.Frame" id="von_mqtt_simulator_dlg">
+    <property name="height">600</property>
+    <property name="width">1024</property>
+    <child>
+      <object class="ttk.Labelframe" id="lblProtcol">
+        <property name="height">50</property>
+        <property name="text" translatable="yes">Protocol</property>
+        <property name="width">1024</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">False</property>
+          <property name="row">0</property>
+          <columns>
+            <column id="0">
+              <property name="pad">10</property>
+            </column>
+            <column id="1">
+              <property name="pad">10</property>
+            </column>
+            <column id="2">
+              <property name="pad">10</property>
+            </column>
+            <column id="3">
+              <property name="pad">10</property>
+            </column>
+            <column id="4">
+              <property name="pad">10</property>
+            </column>
+            <column id="5">
+              <property name="pad">10</property>
+            </column>
+            <column id="6">
+              <property name="pad">10</property>
+            </column>
+            <column id="7">
+              <property name="pad">10</property>
+            </column>
+            <column id="8">
+              <property name="pad">10</property>
+            </column>
+          </columns>
+        </layout>
+        <child>
+          <object class="ttk.Label" id="Label_1">
+            <property name="text" translatable="yes">Protocol Version</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Combobox" id="comboProtocol">
+            <layout>
+              <property name="column">2</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="btnChooseProtocol">
+            <property name="command">on_choose__protocol_button_clicked</property>
+            <property name="text" translatable="yes">Choose Protocol </property>
+            <layout>
+              <property name="column">3</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="Label_55">
+            <property name="text" translatable="yes">Device Serial</property>
+            <layout>
+              <property name="column">4</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Entry" id="txtDeviceSerail">
+            <property name="text" translatable="yes">A000001</property>
+            <property name="width">30</property>
+            <layout>
+              <property name="column">5</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="btnquit">
+            <property name="command">on_quit_button_clicked</property>
+            <property name="text" translatable="yes">quit</property>
+            <layout>
+              <property name="column">6</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Labelframe" id="lblMQTTInfo">
+        <property name="height">150</property>
+        <property name="text" translatable="yes">MQTT Broker Info</property>
+        <property name="width">1024</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">False</property>
+          <property name="row">1</property>
+          <property name="sticky">w</property>
+          <columns>
+            <column id="0">
+              <property name="pad">10</property>
+            </column>
+            <column id="1">
+              <property name="pad">10</property>
+            </column>
+            <column id="2">
+              <property name="pad">10</property>
+            </column>
+            <column id="3">
+              <property name="pad">10</property>
+            </column>
+            <column id="4">
+              <property name="minsize">0</property>
+              <property name="pad">10</property>
+            </column>
+            <column id="5">
+              <property name="pad">10</property>
+            </column>
+            <column id="6">
+              <property name="pad">10</property>
+            </column>
+            <column id="7">
+              <property name="pad">10</property>
+            </column>
+            <column id="8">
+              <property name="pad">10</property>
+            </column>
+          </columns>
+        </layout>
+        <child>
+          <object class="ttk.Label" id="Label_2">
+            <property name="text" translatable="yes">Authentication Method</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Combobox" id="comboAuthMethod">
+            <layout>
+              <property name="column">2</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="Label_3">
+            <property name="text" translatable="yes">Server Address</property>
+            <layout>
+              <property name="column">3</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Entry" id="txtServerAddress">
+            <property name="text" translatable="yes">223.39.121.158</property>
+            <property name="width">30</property>
+            <layout>
+              <property name="column">4</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="Label_43">
+            <property name="text" translatable="yes">UserID</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Entry" id="txtUserID">
+            <property name="text" translatable="yes">gKoCfu9KBbdNRPBRIV1u</property>
+            <property name="width">30</property>
+            <layout>
+              <property name="column">2</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="Label_47">
+            <property name="text" translatable="yes">UserPWD</property>
+            <layout>
+              <property name="column">3</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Entry" id="txtUserPwd">
+            <property name="text" translatable="yes">None</property>
+            <property name="width">30</property>
+            <layout>
+              <property name="column">4</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="Label_54">
+            <property name="text" translatable="yes">Device Private key Path</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Entry" id="txtUserPrvKeyPath">
+            <property name="text" translatable="yes">None</property>
+            <property name="width">60</property>
+            <layout>
+              <property name="column">2</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="btnConnect">
+            <property name="command">on_connect_mqtt_clicked</property>
+            <property name="default">normal</property>
+            <property name="text" translatable="yes">Connect</property>
+            <layout>
+              <property name="column">3</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="btnViewMQTTEvent">
+            <property name="command">on_view_mqtt_event_clicked</property>
+            <property name="default">normal</property>
+            <property name="text" translatable="yes">View mqtt event</property>
+            <layout>
+              <property name="column">4</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="Label_4">
+            <property name="text" translatable="yes">Push Tocken</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">3</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Entry" id="txtPushTocken">
+            <property name="text" translatable="yes">v1/devices/me/telemetry</property>
+            <property name="width">30</property>
+            <layout>
+              <property name="column">2</property>
+              <property name="propagate">True</property>
+              <property name="row">3</property>
+              <property name="sticky">w</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="Label_6">
+            <property name="text" translatable="yes">sub toke from Server Request</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">4</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Entry" id="txtSubToken">
+            <property name="text" translatable="yes">v1/devices/me/rpc/request/+</property>
+            <property name="width">20</property>
+            <layout>
+              <property name="column">2</property>
+              <property name="propagate">True</property>
+              <property name="row">4</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="Label_13">
+            <property name="text" translatable="yes">sub toke from Server Request</property>
+            <layout>
+              <property name="column">3</property>
+              <property name="propagate">True</property>
+              <property name="row">4</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Entry" id="txtRespToken">
+            <property name="text" translatable="yes">v1/devices/me/rpc/response/</property>
+            <property name="width">30</property>
+            <layout>
+              <property name="column">4</property>
+              <property name="propagate">True</property>
+              <property name="row">4</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Labelframe" id="lblScenario">
+        <property name="height">50</property>
+        <property name="text" translatable="yes">Scenario Load</property>
+        <property name="width">1024</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">False</property>
+          <property name="row">2</property>
+          <columns>
+            <column id="0">
+              <property name="pad">10</property>
+            </column>
+            <column id="1">
+              <property name="pad">10</property>
+            </column>
+            <column id="2">
+              <property name="pad">10</property>
+            </column>
+            <column id="3">
+              <property name="pad">10</property>
+            </column>
+            <column id="4">
+              <property name="minsize">0</property>
+              <property name="pad">10</property>
+            </column>
+            <column id="5">
+              <property name="pad">10</property>
+            </column>
+            <column id="6">
+              <property name="pad">10</property>
+            </column>
+            <column id="7">
+              <property name="pad">10</property>
+            </column>
+            <column id="8">
+              <property name="pad">10</property>
+            </column>
+          </columns>
+        </layout>
+        <child>
+          <object class="ttk.Label" id="Label_5">
+            <property name="text" translatable="yes">Scenario File</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Entry" id="txtScenarioPath">
+            <property name="text" translatable="yes">None</property>
+            <property name="width">80</property>
+            <layout>
+              <property name="column">2</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="btnScSelect">
+            <property name="command">on_scn_select_button_clicked</property>
+            <property name="default">normal</property>
+            <property name="text" translatable="yes">Select Scenario</property>
+            <layout>
+              <property name="column">3</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Labelframe" id="lblSimaulControl">
+        <property name="height">100</property>
+        <property name="text" translatable="yes">Simulation Control</property>
+        <property name="width">1024</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">False</property>
+          <property name="row">3</property>
+          <columns>
+            <column id="0">
+              <property name="pad">10</property>
+            </column>
+            <column id="1">
+              <property name="pad">10</property>
+            </column>
+            <column id="2">
+              <property name="pad">10</property>
+            </column>
+            <column id="3">
+              <property name="pad">10</property>
+            </column>
+            <column id="4">
+              <property name="minsize">0</property>
+              <property name="pad">10</property>
+            </column>
+            <column id="5">
+              <property name="pad">10</property>
+            </column>
+            <column id="6">
+              <property name="pad">10</property>
+            </column>
+            <column id="7">
+              <property name="pad">10</property>
+            </column>
+            <column id="8">
+              <property name="pad">10</property>
+            </column>
+          </columns>
+        </layout>
+        <child>
+          <object class="ttk.Label" id="Label_61">
+            <property name="text" translatable="yes">Trip List</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Combobox" id="comboTripList">
+            <layout>
+              <property name="column">2</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="Label_11">
+            <property name="text" translatable="yes">Sending Interval(s)</property>
+            <layout>
+              <property name="column">3</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Entry" id="txtSendingInterval">
+            <property name="text" translatable="yes">1.0</property>
+            <property name="width">10</property>
+            <layout>
+              <property name="column">4</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="Label_12">
+            <property name="text" translatable="yes">Fast FW Times</property>
+            <layout>
+              <property name="column">5</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Entry" id="txtFFTimes">
+            <property name="text" translatable="yes">1</property>
+            <property name="width">10</property>
+            <layout>
+              <property name="column">6</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="Label_59">
+            <property name="text" translatable="yes">Simulation Progress  Time(sec)</property>
+            <layout>
+              <property name="column">3</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Entry" id="txtTotalProgressTime">
+            <property name="text" translatable="yes">None</property>
+            <property name="width">10</property>
+            <layout>
+              <property name="column">4</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Label" id="Label_60">
+            <property name="text" translatable="yes">Simulation State</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Entry" id="txtSimulState">
+            <property name="text" translatable="yes">None</property>
+            <property name="width">10</property>
+            <layout>
+              <property name="column">2</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="btnScStart">
+            <property name="command">on_scn_start_button_clicked</property>
+            <property name="default">normal</property>
+            <property name="text" translatable="yes">Start Scenario</property>
+            <layout>
+              <property name="column">5</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="btnScStop">
+            <property name="command">on_scn_stop_button_clicked</property>
+            <property name="default">normal</property>
+            <property name="text" translatable="yes">Stop Scenario</property>
+            <layout>
+              <property name="column">6</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Notebook" id="Notebook_5">
+        <property name="height">400</property>
+        <property name="width">1024</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">True</property>
+          <property name="row">4</property>
+          <property name="sticky">w</property>
+        </layout>
+        <child>
+          <object class="ttk.Notebook.Tab" id="tabScenario">
+            <property name="text" translatable="yes">Analyzed Scenario Result</property>
+            <child>
+              <object class="tk.Frame" id="Frame_1">
+                <property name="height">200</property>
+                <property name="width">200</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                </layout>
+                <child>
+                  <object class="ttk.Labelframe" id="lblScnTimes">
+                    <property name="height">50</property>
+                    <property name="text" translatable="yes">Times</property>
+                    <property name="width">1024</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">False</property>
+                      <property name="row">1</property>
+                      <columns>
+                        <column id="0">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="1">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="2">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="3">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="4">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="5">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="6">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="7">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="8">
+                          <property name="pad">10</property>
+                        </column>
+                      </columns>
+                    </layout>
+                    <child>
+                      <object class="ttk.Label" id="Label_56">
+                        <property name="text" translatable="yes">Start Time</property>
+                        <layout>
+                          <property name="column">3</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Entry" id="txtStartTime">
+                        <property name="text" translatable="yes">None</property>
+                        <property name="width">10</property>
+                        <layout>
+                          <property name="column">4</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Label" id="Label_57">
+                        <property name="text" translatable="yes">End Time</property>
+                        <layout>
+                          <property name="column">5</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Entry" id="txtEndtime">
+                        <property name="text" translatable="yes">None</property>
+                        <property name="width">10</property>
+                        <layout>
+                          <property name="column">6</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Label" id="Label_58">
+                        <property name="text" translatable="yes">Duration(sec)</property>
+                        <layout>
+                          <property name="column">7</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Entry" id="txtDuration">
+                        <property name="text" translatable="yes">None</property>
+                        <property name="width">10</property>
+                        <layout>
+                          <property name="column">8</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="ttk.Labelframe" id="lblScnGPS">
+                    <property name="height">50</property>
+                    <property name="text" translatable="yes">GPS</property>
+                    <property name="width">1024</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">False</property>
+                      <property name="row">2</property>
+                      <columns>
+                        <column id="0">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="1">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="2">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="3">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="4">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="5">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="6">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="7">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="8">
+                          <property name="pad">10</property>
+                        </column>
+                      </columns>
+                    </layout>
+                    <child>
+                      <object class="ttk.Label" id="Label_64">
+                        <property name="text" translatable="yes">Start Pos</property>
+                        <layout>
+                          <property name="column">1</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Entry" id="txtStartPos">
+                        <property name="text" translatable="yes">None</property>
+                        <property name="width">40</property>
+                        <layout>
+                          <property name="column">2</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Label" id="Label_65">
+                        <property name="text" translatable="yes">End Pos</property>
+                        <layout>
+                          <property name="column">3</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Entry" id="txtEndPos">
+                        <property name="text" translatable="yes">None</property>
+                        <property name="width">40</property>
+                        <layout>
+                          <property name="column">4</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Button" id="btnViewGPSTrack">
+                        <property name="command">on_view_gps_track_clicked</property>
+                        <property name="default">normal</property>
+                        <property name="text" translatable="yes">View GPS Track</property>
+                        <layout>
+                          <property name="column">5</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="ttk.Labelframe" id="lblScnVehicle">
+                    <property name="height">50</property>
+                    <property name="text" translatable="yes">Vehcile</property>
+                    <property name="width">1024</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">False</property>
+                      <property name="row">3</property>
+                      <columns>
+                        <column id="0">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="1">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="2">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="3">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="4">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="5">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="6">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="7">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="8">
+                          <property name="pad">10</property>
+                        </column>
+                      </columns>
+                    </layout>
+                    <child>
+                      <object class="ttk.Label" id="Label_67">
+                        <property name="text" translatable="yes">Fuel consumption</property>
+                        <layout>
+                          <property name="column">1</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Entry" id="txtFCO">
+                        <property name="text" translatable="yes">None</property>
+                        <property name="width">10</property>
+                        <layout>
+                          <property name="column">2</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Label" id="Label_68">
+                        <property name="text" translatable="yes">Distance</property>
+                        <layout>
+                          <property name="column">3</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Entry" id="txtDistance">
+                        <property name="text" translatable="yes">None</property>
+                        <property name="width">10</property>
+                        <layout>
+                          <property name="column">4</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Label" id="Label_74">
+                        <property name="text" translatable="yes">Distance</property>
+                        <layout>
+                          <property name="column">5</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Entry" id="txtDistance_22">
+                        <property name="text" translatable="yes">None</property>
+                        <property name="width">10</property>
+                        <layout>
+                          <property name="column">6</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="ttk.Labelframe" id="lblScnDynamic">
+                    <property name="height">50</property>
+                    <property name="text" translatable="yes">Dynamics</property>
+                    <property name="width">1024</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">False</property>
+                      <property name="row">4</property>
+                      <columns>
+                        <column id="0">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="1">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="2">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="3">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="4">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="5">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="6">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="7">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="8">
+                          <property name="pad">10</property>
+                        </column>
+                      </columns>
+                    </layout>
+                    <child>
+                      <object class="ttk.Label" id="Label_69">
+                        <property name="text" translatable="yes">MaxSpd(km/s)</property>
+                        <layout>
+                          <property name="column">1</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Entry" id="txtMaxSpeed">
+                        <property name="text" translatable="yes">None</property>
+                        <property name="width">10</property>
+                        <layout>
+                          <property name="column">2</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Label" id="Label_70">
+                        <property name="text" translatable="yes">Min Spd(km/s)</property>
+                        <layout>
+                          <property name="column">3</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Entry" id="txtMinSpeed">
+                        <property name="text" translatable="yes">None</property>
+                        <property name="width">10</property>
+                        <layout>
+                          <property name="column">4</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Label" id="Label_71">
+                        <property name="text" translatable="yes">Max Accel(G)</property>
+                        <layout>
+                          <property name="column">5</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Entry" id="txtMaxAccel">
+                        <property name="text" translatable="yes">None</property>
+                        <property name="width">10</property>
+                        <layout>
+                          <property name="column">6</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Label" id="Label_72">
+                        <property name="text" translatable="yes">MaxDeccel(G)</property>
+                        <layout>
+                          <property name="column">7</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Entry" id="txtMaxDeccel">
+                        <property name="text" translatable="yes">None</property>
+                        <property name="width">10</property>
+                        <layout>
+                          <property name="column">8</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Label" id="Label_73">
+                        <property name="text" translatable="yes">MaxAngSpd(deg/s)</property>
+                        <layout>
+                          <property name="column">9</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Entry" id="txtMaxAS">
+                        <property name="text" translatable="yes">None</property>
+                        <property name="width">10</property>
+                        <layout>
+                          <property name="column">10</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Button" id="btnViewDynamicGraph">
+                        <property name="command">on_view_dynamics_button_clicked</property>
+                        <property name="default">normal</property>
+                        <property name="text" translatable="yes">View Dynamics Graph</property>
+                        <layout>
+                          <property name="column">11</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Notebook.Tab" id="tabPushProtocol">
+            <property name="text" translatable="yes">Kinds of Protocol</property>
+            <child>
+              <object class="ttk.Frame" id="Frame_2">
+                <property name="height">200</property>
+                <property name="width">200</property>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="propagate">True</property>
+                  <property name="row">0</property>
+                </layout>
+                <child>
+                  <object class="ttk.Labelframe" id="lblPushProtocols">
+                    <property name="height">50</property>
+                    <property name="text" translatable="yes">From Device to Server</property>
+                    <property name="width">1024</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">False</property>
+                      <property name="row">1</property>
+                      <columns>
+                        <column id="0">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="1">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="2">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="3">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="4">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="5">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="6">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="7">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="8">
+                          <property name="pad">10</property>
+                        </column>
+                      </columns>
+                    </layout>
+                    <child>
+                      <object class="tk.Checkbutton" id="ChkTDR">
+                        <property name="text" translatable="yes">Tracked Driving Record</property>
+                        <layout>
+                          <property name="column">0</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="tk.Checkbutton" id="ChkTrip">
+                        <property name="text" translatable="yes">Trip</property>
+                        <layout>
+                          <property name="column">1</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="tk.Checkbutton" id="ChkGPSHello">
+                        <property name="text" translatable="yes">GPS Hello</property>
+                        <layout>
+                          <property name="column">2</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="tk.Checkbutton" id="ChkNetworkHello">
+                        <property name="text" translatable="yes">Network Hello</property>
+                        <layout>
+                          <property name="column">3</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="ttk.Labelframe" id="lblSubProtocol">
+                    <property name="height">50</property>
+                    <property name="text" translatable="yes">From Server to Device</property>
+                    <property name="width">1024</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="propagate">False</property>
+                      <property name="row">2</property>
+                      <columns>
+                        <column id="0">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="1">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="2">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="3">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="4">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="5">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="6">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="7">
+                          <property name="pad">10</property>
+                        </column>
+                        <column id="8">
+                          <property name="pad">10</property>
+                        </column>
+                      </columns>
+                    </layout>
+                    <child>
+                      <object class="ttk.Button" id="btnSerialID">
+                        <property name="command">on_get_gps_token_button_clicked</property>
+                        <property name="default">normal</property>
+                        <property name="text" translatable="yes">Device Serial</property>
+                        <layout>
+                          <property name="column">1</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Button" id="btnReset">
+                        <property name="command">on_get_gps_token_button_clicked</property>
+                        <property name="default">normal</property>
+                        <property name="text" translatable="yes">Reset</property>
+                        <layout>
+                          <property name="column">2</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Button" id="btnBeep">
+                        <property name="command">on_get_gps_token_button_clicked</property>
+                        <property name="default">normal</property>
+                        <property name="text" translatable="yes">Beep</property>
+                        <layout>
+                          <property name="column">3</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Button" id="btnConfimedTrip">
+                        <property name="command">on_get_gps_token_button_clicked</property>
+                        <property name="default">normal</property>
+                        <property name="text" translatable="yes">Confiremd Trip</property>
+                        <layout>
+                          <property name="column">4</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Button" id="btnCurrentTDR">
+                        <property name="command">on_get_gps_token_button_clicked</property>
+                        <property name="default">normal</property>
+                        <property name="text" translatable="yes">Get TDR</property>
+                        <layout>
+                          <property name="column">5</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Button" id="btnGetTime">
+                        <property name="command">on_get_gps_token_button_clicked</property>
+                        <property name="default">normal</property>
+                        <property name="text" translatable="yes">Get Time</property>
+                        <layout>
+                          <property name="column">6</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Button" id="btnNetworkID">
+                        <property name="command">on_get_gps_token_button_clicked</property>
+                        <property name="default">normal</property>
+                        <property name="text" translatable="yes">Radio ID</property>
+                        <layout>
+                          <property name="column">6</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Button" id="btnRadioUsage">
+                        <property name="command">on_get_gps_token_button_clicked</property>
+                        <property name="default">normal</property>
+                        <property name="text" translatable="yes">Radio Usage</property>
+                        <layout>
+                          <property name="column">6</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Button" id="btnStopPush">
+                        <property name="command">on_get_gps_token_button_clicked</property>
+                        <property name="default">normal</property>
+                        <property name="text" translatable="yes">StopPush</property>
+                        <layout>
+                          <property name="column">7</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="ttk.Button" id="btnGPSHelloResponse">
+                        <property name="command">on_get_gps_token_button_clicked</property>
+                        <property name="default">normal</property>
+                        <property name="text" translatable="yes">GPSHelloResponse</property>
+                        <layout>
+                          <property name="column">8</property>
+                          <property name="propagate">True</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
