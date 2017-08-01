@@ -31,6 +31,8 @@ https://github.com/tremoteye/device-starter-kit
 
 3.Prerequeiste 
 
+<img src="https://github.com/kangg18/von_mqtt_simulator/blob/master/simulator_screen_3.png?raw=true">
+
     1) Python Install - 
         (https://www.continuum.io/downloads)
 
