@@ -13,7 +13,7 @@ MQTT Simulator JastecmOBD
     3) requirement install 
        wget  https://bootstrap.pypa.io/get-pip.py
        python get-pip.py
-       pip install -r requirments.txt 
+       pip install -r requirements.txt 
          
     4) invokation
        python von_mqtt_simulator.py
