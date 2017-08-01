@@ -1,0 +1,1 @@
+pyinstaller -F von_mqtt_simulator.py

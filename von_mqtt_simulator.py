@@ -85,6 +85,7 @@ VONMqttProtocol.MQTT_RPC_CMD_SET_SECURITY_LEVEL ="setSecuritylevel"
 VONMqttProtocol.MQTT_RPC_CMD_CLEAR_ALL_DATA ="clearAllData" 	
 VONMqttProtocol.MQTT_RPC_CMD_GET_GPS_KEY ="getGPSKey" 
 VONMqttProtocol.MQTT_RPC_CMD_SEND_UPDATE_INFO ="sendUpdateInfo" 
+VONMqttProtocol.MQTT_RPC_CMD_GET_DEVICE_INFO ="getDeviceInfo"
 
 class MQTTLogViewr:
 	def __init__(self, master):
@@ -159,6 +160,11 @@ class VehicleSimulator:
 	def doLoop(self):
 
 		self.progressTime = 0 
+
+
+
+		self.upperapp.updateUIState(True)
+
 		while self.stop==False:
 			a = self.goNextSlice() 
 			if a ==None:
@@ -185,7 +191,7 @@ class VehicleSimulator:
 			speedArray = MeanInterPolator(self.ahead.speed, self.next.speed,self.iteratorNum)
 			latArray  =MeanInterPolator(self.ahead.lat, self.next.lat,self.iteratorNum)
 			lonArray  =MeanInterPolator(self.ahead.lon, self.next.lon,self.iteratorNum)
-			'''
+			
 			distancerray  =MeanInterPolator(self.ahead.distance, self.next.distance,self.iteratorNum)
 			fcArray  =MeanInterPolator(self.ahead.fc, self.next.fc,self.iteratorNum)
 			tpsArray  =MeanInterPolator(self.ahead.tps, self.next.tps,self.iteratorNum)
@@ -197,7 +203,7 @@ class VehicleSimulator:
 			courseArray  =MeanInterPolator(self.ahead.course, self.next.course,self.iteratorNum)
 			axArray  =MeanInterPolator(self.ahead.acc_xy, self.next.acc_xy,self.iteratorNum)
 			asArray  =MeanInterPolator(self.ahead.yaw_rot, self.next.yaw_rot,self.iteratorNum)
-			'''
+			
 
 			normDriveSec=   self.driveSecList[self.driveSecIndex-1]
 
@@ -210,7 +216,7 @@ class VehicleSimulator:
 				aDrvisec.speed=int(speedArray.getValue())
 				aDrvisec.lat=int(latArray.getValue())
 				aDrvisec.lon=int(lonArray.getValue())
-				'''
+				
 				aDrvisec.distance=int(distancerray.getValue())
 				aDrvisec.fc=int(fcArray.getValue())
 				aDrvisec.tps=int(tpsArray.getValue())
@@ -223,7 +229,7 @@ class VehicleSimulator:
 				aDrvisec.gVal=normDriveSec.gVal
 				aDrvisec.acc_xy=int(axArray.getValue())
 				aDrvisec.yaw_rot=int(asArray.getValue())
-				'''
+				
 				aDrvisec.s_mark=0
 				
 
@@ -248,6 +254,8 @@ class VehicleSimulator:
 				time.sleep(self.sleepTime)
 			
 
+
+				self.upperapp.updateUITime(self.progressTime)
 
 
 				aDriveSecJosn = JsonMQTTMarshall()
@@ -294,6 +302,9 @@ class VehicleSimulator:
 					#speed 
 					aTrip.avgSpeed=self.tripInfo.avgSpeed 
 					aTrip.maxSpeed=self.tripInfo.maxSpeed 
+					aTrip.max_accel=self.tripInfo.max_accel 
+					aTrip.max_decel=self.tripInfo.max_decel 
+					aTrip.max_rot=self.tripInfo.max_rot 
 
 					#co2
 					aTrip.co2PerKm=self.tripInfo.co2PerKm 
@@ -304,6 +315,7 @@ class VehicleSimulator:
 					
 					#vehicle 
 					aTrip.engTempMax=self.tripInfo.engTempMax
+					aTrip.tpsMax=self.tripInfo.tpsMax
 
 					#gps 
 					aTrip.h_lat=self.tripInfo.h_lat 
@@ -329,8 +341,10 @@ class VehicleSimulator:
 
 			if self.stop == True:
 					print "Scn Stop "
-					return 
-
+					break 
+		
+		print "Scn Stop ======"
+		self.upperapp.updateUIState(False)
 
 
 class DrawDynamics:
@@ -462,9 +476,15 @@ class MQTTClient:
 		self.mqttc.subscribe(self.rpcResTopic, 0)
 	def publish(self,payload):
 		if self.isConneced == True:
-			self.mqttc.publish(self.sendingTopic,payload)
+			self.mqttc.publish(self.rpcResTopic,payload)
 			if hasattr(self.uppaerapp, 'mqttLogViwer'):
 					self.uppaerapp.mqttLogViwer.pushlog("pub "  , self.sendingTopic + "   payload : " +  payload +"\r\n" )
+
+	def response(self,reqid,payload):
+		if self.isConneced == True:
+			self.mqttc.publish(self.rpcResTopic+str(reqid) ,payload)
+			if hasattr(self.uppaerapp, 'mqttLogViwer'):
+					self.uppaerapp.mqttLogViwer.pushlog("response "  , self.rpcResTopic+reqid  + "   payload : " +  payload +"\r\n" )
 
 	def on_connect(self,mqttc, obj, flags, rc):
 		print("on_connect rc: " + str(rc))
@@ -482,6 +502,12 @@ class MQTTClient:
 		print(string)	
 	def __del__(self):	
 		self.mqttc.disconnect()
+
+class ResultMarshall(object): 
+	def __init__(self):
+		self.results="0"
+		self.additionalInfo={}
+
 
 class NetworkHelloMarshall(object): 
 	def __init__(self):
@@ -543,6 +569,7 @@ class DriveSecMarshall(object):
 		self.acc_xy=0
 		self.yaw_rot=0
 		self.s_mark=0
+		self.encoded=0
 	def __str__(self):
 		s = ""
 		s = s + str(self.ts) + ": " 
@@ -564,6 +591,22 @@ class DriveSecMarshall(object):
 		s = s + str(self.s_mark) + ": " 
 		return s 
 
+class RUsageMarshall(object): 
+	def __init__(self):
+		self.stime =0
+		self.etime =0
+		self.sent=0
+		self.receved=0
+		#time 
+class VehicleInfo(object): 
+	def __init__(self):
+		self.modelcode =0
+		self.cylNo =0
+		self.vol =0
+		self.fuel =0
+		self.hybrid=0
+		self.vin =""
+		#time 
 
 class TripMarshall(object): 
 	def __init__(self):
@@ -584,6 +627,10 @@ class TripMarshall(object):
 		self.sudden_mark_accel=0
 		self.sudden_mark_decel=0
 		self.sudden_mark_rot=0
+		self.max_accel=0
+		self.max_decel=0
+		self.max_rot=0
+
 		#fc
 		self.fcMass=0
 		self.fcEffi=0
@@ -601,6 +648,7 @@ class TripMarshall(object):
 		
 		#vehicle 
 		self.engTempMax=0
+		self.tpsMax=0
 
 		#gps 
 		self.h_lat=0
@@ -700,6 +748,12 @@ class Scenario:
 
 
 		speedMax = 0
+		aceel_max = 0
+		decel_max = 10
+		rot_max = 0
+		engTempMax = 0 
+		tpsMax = 0 
+		
 
 		for driveSec in drvSecList:
 			#print driveSec	
@@ -734,7 +788,18 @@ class Scenario:
 			tripInfo.accelArray.append(driveSec.acc_xy)		
 			tripInfo.asArray.append(driveSec.yaw_rot)		
 			tripInfo.end_time = driveSec.ts 
-			speedMax = (speedMax,driveSec.speed)
+			speedMax = max([speedMax,driveSec.speed])
+
+			if driveSec.acc_xy> 0:
+				aceel_max = max([aceel_max,driveSec.acc_xy])
+
+			if driveSec.acc_xy < 0:
+				decel_max = min([decel_max,driveSec.acc_xy])
+
+			rot_max = max([rot_max,driveSec.yaw_rot])
+
+			engTempMax = max([engTempMax,driveSec.engTemp])
+			tpsMax = max([tpsMax,driveSec.tps])
 
 			if tripInfo.sudden_mark_point ==1 :
 				tripInfo.sudden_mark_accel = tripInfo.sudden_mark_accel+1
@@ -780,7 +845,12 @@ class Scenario:
 		tripInfo.distance = driveSec.distance
 		tripInfo.avgSpeed=driveSec.distance/tripInfo.duration*1.0
 		tripInfo.maxSpeed=speedMax
+		tripInfo.max_accel = aceel_max
+		tripInfo.decel_max = decel_max
+		tripInfo.max_rot =rot_max
 
+		tripInfo.engTempMax = engTempMax
+		tripInfo.tpsMax = tpsMax
 		#co2
 		tripInfo.co2PerKm=0 # implmented in Real Device 
 		tripInfo.co2Mass=0  # implmented in Real Device 
@@ -871,7 +941,7 @@ class Application:
 
 	def isSendable_Trip(self): 
 		builder = self.builder
-		if builder.get_variable('varTrip').get()=='1':
+		if int(builder.get_variable('varTrip').get())==1:
 			return True 
 		return False
 
@@ -960,17 +1030,39 @@ class Application:
 		
 		
 		self.txtDistance = builder.get_object('txtDistance', self.mainwindow)
-		self.txtFCO.delete(0, END)
-		self.txtFCO.insert(0, ATrip.distance)
+		self.txtDistance.delete(0, END)
+		self.txtDistance.insert(0, ATrip.distance)
 		
 		
+
+		self.txtEngineTemp = builder.get_object('txtEngineTemp', self.mainwindow)
+		self.txtEngineTemp.delete(0, END)
+		self.txtEngineTemp.insert(0, ATrip.engTempMax)
 		
-		self.txtMaxSpeed = builder.get_object('txtMaxSpeed', self.mainwindow)
-		self.txtMinSpeed = builder.get_object('txtMinSpeed', self.mainwindow)
+
+		self.txtMaxThrottlePosition = builder.get_object('txtMaxThrottlePosition', self.mainwindow)
+		self.txtMaxThrottlePosition.delete(0, END)
+		self.txtMaxThrottlePosition.insert(0, ATrip.tpsMax)
+
+		
+		
+		self.txtMaxSpeed = builder.get_object('txtMaxThrottlePosition', self.mainwindow)
+
+		self.txtMaxSpeed.delete(0, END)
+		self.txtMaxSpeed.insert(0, ATrip.maxSpeed)
+
+
 		self.txtMaxAccel = builder.get_object('txtMaxAccel', self.mainwindow)	
+		self.txtMaxAccel.delete(0, END)
+		self.txtMaxAccel.insert(0, ATrip.max_accel)
+
 		self.txtMaxDeccel = builder.get_object('txtMaxDeccel', self.mainwindow)	
+		self.txtMaxDeccel.delete(0, END)
+		self.txtMaxDeccel.insert(0, ATrip.max_decel)
+
 		self.txtMaxAS = builder.get_object('txtMaxAS', self.mainwindow)	
-		
+		self.txtMaxAS.delete(0, END)
+		self.txtMaxAS.insert(0, ATrip.max_rot)
 	
 		pass
 		
@@ -1126,6 +1218,29 @@ class Application:
 
 		pass
 
+
+	def updateUITime(self,progressTime):
+
+		builder = self.builder
+		self.txtTotalProgressTime = builder.get_object('txtTotalProgressTime', self.mainwindow)
+		
+		self.txtTotalProgressTime.delete(0, END)
+		self.txtTotalProgressTime.insert(0, progressTime)
+	
+		pass
+
+	def updateUIState(self,actState):
+
+		builder = self.builder
+		self.txtSimulState = builder.get_object('txtSimulState', self.mainwindow)
+		if actState == False:
+			self.txtSimulState.delete(0, END)
+			self.txtSimulState.insert(0, "stopped")
+		if actState == True:
+			self.txtSimulState.delete(0, END)
+			self.txtSimulState.insert(0, "started")
+		pass
+
 	def on_send_gps_hello_button_clicked(self):
 		jSon = JsonMQTTMarshall()
 		gpsHello = GPSHelloMarshall() 
@@ -1220,40 +1335,74 @@ class Application:
 		pass
 
 		
-	def on_from_server_serial_button_clicked(self):
-
-		aa = "{\"method\":\"serail\",\"params\":{\"Immediate\":\"true\"}}"
-		print aa
-		thawed = jsonpickle.decode(aa)
 	
-		if thawed['method'] == VONMqttProtocol.VONMqttProtocol.MQTT_RPC_CMD_JSON_SERIAL:
-			print thawed['params']
-
-
-
-		pass
-
-	def on_from_server_beep_button_clicked(self):
-
-		aa = "{\"method\":\"beep\"}"
-		print aa
-		thawed = jsonpickle.decode(aa)
-	
-		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_BEEP_LEVEL:
-			print thawed['params']
-
-
-
-		passs
-
 	def on_from_server_reset_button_clicked(self):
 
 		aa = "{\"method\":\"reset\",\"params\":{\"Immediate\":\"true\"}}"
 		print aa
 		thawed = jsonpickle.decode(aa)
-	
+		
+
+		response_id = '1' 
+		aREsult = ResultMarshall()
+		resp = jsonpickle.encode(aREsult,unpicklable=False)
+		print resp
 		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_JSON_RESET:
-			print thawed['params']
+			self.theMQTT.response(response_id,resp)
+		
+
+	'''
+	VONMqttProtocol.MQTT_RPC_CMD_JSON_RESET ="reset"
+	VONMqttProtocol.MQTT_RPC_CMD_JSON_BEEP = "beep" 
+	VONMqttProtocol.MQTT_RPC_CMD_JSON_SERIAL = "serial" 
+	VONMqttProtocol.MQTT_RPC_CMD_JSON_TDR ="gettdr" 
+	VONMqttProtocol.MQTT_RPC_CMD_JSON_TRIP ="gettrip" 
+	VONMqttProtocol.MQTT_RPC_CMD_JSON_RUSAGE ="getrusage" 
+	VONMqttProtocol.MQTT_RPC_CMD_JSON_STOPPUSH ="stoppush" 
+	VONMqttProtocol.MQTT_RPC_CMD_JSON_VINFO ="getVinfo" 
+	VONMqttProtocol.MQTT_RPC_CMD_FW_CHUNK ="sendfwchunk"
+	VONMqttProtocol.MQTT_RPC_CMD_CARDB_CHUNK ="sendcardbchunk"
+	VONMqttProtocol.MQTT_RPC_CMD_GET_SECURITY_LEVEL ="getSecuritylevel" 
+	VONMqttProtocol.MQTT_RPC_CMD_SET_SECURITY_LEVEL ="setSecuritylevel" 	
+	VONMqttProtocol.MQTT_RPC_CMD_CLEAR_ALL_DATA ="clearAllData" 	
+	VONMqttProtocol.MQTT_RPC_CMD_GET_GPS_KEY ="getGPSKey" 
+	VONMqttProtocol.MQTT_RPC_CMD_SEND_UPDATE_INFO ="sendUpdateInfo" 
+	VONMqttProtocol.MQTT_RPC_CMD_GET_DEVICE_INFO ="getDeviceInfo"
+	'''
+
+		
+	def on_from_server_beep_button_clicked(self):
+
+		aa = "{\"method\":\"beep\"}"
+		print aa
+		thawed = jsonpickle.decode(aa)
+		response_id = '1' 
+		aREsult = ResultMarshall()
+		resp = jsonpickle.encode(aREsult,unpicklable=False)
+		print resp
+		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_JSON_BEEP:
+			self.theMQTT.response(response_id,resp)
+
+
+
+		pass
+
+	def on_from_server_serial_button_clicked(self):
+
+		aa = "{\"method\":\"serial\"}"
+		print aa
+		thawed = jsonpickle.decode(aa)
+		
+		response_id = '1' 
+		aREsult = ResultMarshall()
+		sampleResponse={}
+		sampleResponse['serial']="A00001"
+		aREsult.additionalInfo = sampleResponse
+		resp = jsonpickle.encode(aREsult,unpicklable=False)
+		print resp
+
+		if thawed['method'] == VONMqttProtocol.VONMqttProtocol.MQTT_RPC_CMD_JSON_SERIAL:
+			self.theMQTT.response(response_id,resp)
 
 
 
@@ -1265,8 +1414,17 @@ class Application:
 		print aa
 		thawed = jsonpickle.decode(aa)
 	
+
+		response_id = '1' 
+		aREsult = ResultMarshall()
+		sampleResponse={}
+		sampleResponse['tdr']=DriveSecMarshall()
+		aREsult.additionalInfo = sampleResponse
+		resp = jsonpickle.encode(aREsult,unpicklable=False)
+		print resp
+
 		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_JSON_TDR:
-			print thawed['params']
+			self.theMQTT.response(response_id,resp)
 
 
 
@@ -1277,9 +1435,18 @@ class Application:
 		aa = "{\"method\":\"gettrip\",\"params\":{\"lastoffset\":\"-1\"}}"
 		print aa
 		thawed = jsonpickle.decode(aa)
-	
+		
+		response_id = '1' 
+		aREsult = ResultMarshall()
+		sampleResponse={}
+		sampleResponse['trip']=TripMarshall()
+		aREsult.additionalInfo = sampleResponse
+		resp = jsonpickle.encode(aREsult,unpicklable=False)
+		print resp
+
+
 		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_JSON_TRIP:
-			print thawed['params']
+			self.theMQTT.response(response_id,resp)
 
 
 
@@ -1293,8 +1460,17 @@ class Application:
 		print aa
 		thawed = jsonpickle.decode(aa)
 	
+
+		response_id = '1' 
+		aREsult = ResultMarshall()
+		sampleResponse={}
+		sampleResponse['rusage']=RUsageMarshall()
+		aREsult.additionalInfo = sampleResponse
+		resp = jsonpickle.encode(aREsult,unpicklable=False)
+		print resp
+
 		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_JSON_RUSAGE:
-			print thawed['params']
+			self.theMQTT.response(response_id,resp)
 
 
 
@@ -1307,9 +1483,13 @@ class Application:
 		aa = "{\"method\":\"stoppush\"}"
 		print aa
 		thawed = jsonpickle.decode(aa)
-	
+		response_id = '1' 
+		aREsult = ResultMarshall()
+		aREsult.additionalInfo = ""
+		resp = jsonpickle.encode(aREsult,unpicklable=False)
+		print resp
 		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_JSON_STOPPUSH:
-			print thawed['params']
+			self.theMQTT.response(response_id,resp)
 
 
 
@@ -1320,8 +1500,16 @@ class Application:
 		print aa
 		thawed = jsonpickle.decode(aa)
 	
+		response_id = '1' 
+		aREsult = ResultMarshall()
+		sampleResponse={}
+		sampleResponse['vinfo']=VehicleInfo()
+		aREsult.additionalInfo = sampleResponse
+		resp = jsonpickle.encode(aREsult,unpicklable=False)
+		print resp
+
 		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_JSON_VINFO:
-			print thawed['params']
+				self.theMQTT.response(response_id,resp)
 
 
 
@@ -1329,12 +1517,19 @@ class Application:
 
 	def on_from_server_sendfwchunk_button_clicked(self):
 
-		aa = "{\"method\":\"sendfwchunk\",\"params\":{\"total_size\":\"512348\",\"chunk_size\":\"128\",,\"chunk_index\":\"1\",\"payload\":\"MFIXX23\"}}"
+		aa = "{\"method\":\"sendfwchunk\",\"params\":{\"total_size\":512348,\"chunk_size\":128,\"chunk_index\":1,\"payload\":\"MFIXX23\"}}"
 		print aa
 		thawed = jsonpickle.decode(aa)
 	
+
+		response_id = '1' 
+		aREsult = ResultMarshall()
+		aREsult.additionalInfo = ""
+		resp = jsonpickle.encode(aREsult,unpicklable=False)
+		print resp
+
 		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_FW_CHUNK:
-			print thawed['params']
+			self.theMQTT.response(response_id,resp)
 
 
 
@@ -1345,9 +1540,12 @@ class Application:
 	
 		print aa
 		thawed = jsonpickle.decode(aa)
-	
+		response_id = '1' 
+		aREsult = ResultMarshall()
+		aREsult.additionalInfo = ""
+		print resp
 		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_CARDB_CHUNK:
-			print thawed['params']
+			self.theMQTT.response(response_id,resp)
 
 
 
@@ -1359,9 +1557,15 @@ class Application:
 		aa = "{\"method\":\"getSecuritylevel\"}"
 		print aa
 		thawed = jsonpickle.decode(aa)
-	
+		response_id = '1' 
+		aREsult = ResultMarshall()
+		sampleResponse['level']=1
+		aREsult.additionalInfo = sampleResponse
+		resp = jsonpickle.encode(aREsult,unpicklable=False)
+		print resp
+
 		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_GET_SECURITY_LEVEL:
-			print thawed['params']
+			self.theMQTT.response(response_id,resp)
 
 
 
@@ -1373,9 +1577,14 @@ class Application:
 		aa = "{\"method\":\"setSecuritylevel\",\"params\":{\"level\":\"1\"}}"
 		print aa
 		thawed = jsonpickle.decode(aa)
-	
+		response_id = '1' 
+		aREsult = ResultMarshall()
+		aREsult.additionalInfo = ""
+		resp = jsonpickle.encode(aREsult,unpicklable=False)
+		print resp
+		
 		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_SET_SECURITY_LEVEL:
-			print thawed['params']
+			self.theMQTT.response(response_id,resp)
 
 
 
@@ -1387,9 +1596,15 @@ class Application:
 		aa = "{\"method\":\"clearAllData\"}"
 		print aa
 		thawed = jsonpickle.decode(aa)
-	
+		
+		response_id = '1' 
+		aREsult = ResultMarshall()
+		aREsult.additionalInfo = ""
+		resp = jsonpickle.encode(aREsult,unpicklable=False)
+		print resp
+
 		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_CLEAR_ALL_DATA:
-			print thawed['params']
+			self.theMQTT.response(response_id,resp)
 
 
 
@@ -1400,9 +1615,15 @@ class Application:
 		aa = "{\"method\":\"getGPSKey\"}"
 		print aa
 		thawed = jsonpickle.decode(aa)
-	
+		sampleResponse ={}
+		response_id = '1' 
+		aREsult = ResultMarshall()
+		sampleResponse['gpskey']="AXSDM4354545DFDFDFDFDFDFDF"
+		aREsult.additionalInfo = sampleResponse
+		resp = jsonpickle.encode(aREsult,unpicklable=False)
+		print resp
 		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_GET_GPS_KEY:
-			print thawed['params']
+			self.theMQTT.response(response_id,resp)
 
 
 
@@ -1413,13 +1634,37 @@ class Application:
 		aa = "{\"method\":\"sendUpdateInfo\",\"params\":{\"type\":\"fw\"}}"
 		print aa
 		thawed = jsonpickle.decode(aa)
-	
+		response_id = '1' 
+		aREsult = ResultMarshall()
+		aREsult.additionalInfo = ""
+		resp = jsonpickle.encode(aREsult,unpicklable=False)
+		print resp
 		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_SEND_UPDATE_INFO:
 			print thawed['params']
 
 
 
 		pass
+
+	def on_from_server_getdevice_info_button_clicked(self):
+
+		aa = "{\"method\":\"getdeviceinfo\",\"params\":{\"type\":\"fw\"}}"
+		print aa
+		thawed = jsonpickle.decode(aa)
+		response_id = '1' 
+		aREsult = ResultMarshall()
+		sampleResponse={}
+		sampleResponse['device']=NetworkHelloMarshall()
+		aREsult.additionalInfo = sampleResponse
+		resp = jsonpickle.encode(aREsult,unpicklable=False)
+		print resp
+	
+		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_SEND_UPDATE_INFO:
+			print thawed['params']
+
+
+
+		pass	
 
 if __name__ == '__main__':
 	ROOT_PATH = os.path.dirname(os.path.abspath(__file__))   
