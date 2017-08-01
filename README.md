@@ -7,10 +7,15 @@ MQTT Simulator JastecmOBD
         (https://www.continuum.io/downloads)
 
    2)  requirement install 
+   
          wget  https://bootstrap.pypa.io/get-pip.py
+         
          python get-pip.py
+         
          pip install -r requirments.txt 
+         
          in windows (C:\ProgramData\Anaconda2\Scripts\pip.exe)
+         
    3)  invokation
          python von_mqtt_simulator.py
 
