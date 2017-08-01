@@ -46,3 +46,7 @@ https://github.com/tremoteye/device-starter-kit
     10) Click VIEW MQTT Event (3)
     11) START Scenario (9)
     12) End Scenario (10)
+
+Simulator screen
+
+<img src="https://github.com/kangg18/von_mqtt_simulator/blob/master/simulator_screen_2.PNG?raw=true">
