@@ -2,13 +2,13 @@
 MQTT Simulator JastecmOBD
 
 
+
 1.Prerequeiste 
 
     1) Python Install - 
         (https://www.continuum.io/downloads)
 
-    2) Anaconda prompt
-   
+    2) Anaconda prompt
 
     3) requirement install 
        wget  https://bootstrap.pypa.io/get-pip.py
