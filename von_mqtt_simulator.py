@@ -1046,10 +1046,10 @@ class Application:
 
 		
 		
-		self.txtMaxSpeed = builder.get_object('txtMaxThrottlePosition', self.mainwindow)
+		self.txtMaxThrottlePosition = builder.get_object('txtMaxThrottlePosition', self.mainwindow)
 
-		self.txtMaxSpeed.delete(0, END)
-		self.txtMaxSpeed.insert(0, ATrip.maxSpeed)
+		self.txtMaxThrottlePosition.delete(0, END)
+		self.txtMaxThrottlePosition.insert(0, ATrip.maxSpeed)
 
 
 		self.txtMaxAccel = builder.get_object('txtMaxAccel', self.mainwindow)	
@@ -1401,7 +1401,7 @@ class Application:
 		resp = jsonpickle.encode(aREsult,unpicklable=False)
 		print resp
 
-		if thawed['method'] == VONMqttProtocol.VONMqttProtocol.MQTT_RPC_CMD_JSON_SERIAL:
+		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_JSON_SERIAL:
 			self.theMQTT.response(response_id,resp)
 
 
@@ -1536,13 +1536,15 @@ class Application:
 		pass
 	def on_from_server_sendcardbchunk_button_clicked(self):
 
-		aa = "{\"method\":\"sendcardbchunk\",\"params\":{\"total_size\":\"512348\",\"chunk_size\":\"128\",,\"chunk_index\":\"1\",\"payload\":\"MFIXX23\"}}"
-	
+		
+		aa = "{\"method\":\"sendcardbchunk\",\"params\":{\"total_size\":512348,\"chunk_size\":128,\"chunk_index\":1,\"payload\":\"MFIXX23\"}}"
+		
 		print aa
 		thawed = jsonpickle.decode(aa)
 		response_id = '1' 
 		aREsult = ResultMarshall()
 		aREsult.additionalInfo = ""
+		resp = jsonpickle.encode(aREsult,unpicklable=False)
 		print resp
 		if thawed['method'] == VONMqttProtocol.MQTT_RPC_CMD_CARDB_CHUNK:
 			self.theMQTT.response(response_id,resp)
@@ -1556,6 +1558,7 @@ class Application:
 
 		aa = "{\"method\":\"getSecuritylevel\"}"
 		print aa
+		sampleResponse={}
 		thawed = jsonpickle.decode(aa)
 		response_id = '1' 
 		aREsult = ResultMarshall()
